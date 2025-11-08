@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hflav-zenodo"
+version = "0.1.0"
+description = "Helper to fetch HFLAV data from Zenodo"
+readme = "README.md"
+authors = [ { name = "sergio" } ]
+license = { file = "LICENSE" }
+dependencies = [
+  "requests>=2.28"
+]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["hflav_zenodo*"]
+
+[project.urls]
+Homepage = "https://example.org/"
