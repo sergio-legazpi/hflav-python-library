@@ -1,0 +1,544 @@
+{
+    "metadata": {
+        "title": "HFLAV Template averages",
+        "description": "Write longer description here",
+        "version": "1.0.0",
+        "date": "2024-05-01",
+        "author": "HFLAV Collaboration",
+        "schema": "1.0.0"
+    },
+    "groups": [
+        {
+            "name": "Branching fractions",
+            "fit": {
+                "chi2": 177.79892806528355,
+                "ndf": 156,
+                "p": 0.11156555504195274
+            },
+            "averages": [
+                {
+                    "name": "BR_tau-_K0_nutau__inclusive (1-prong)",
+                    "comment": "This is a comment for the measurement",
+                    "PDGcode": "S035.219",
+                    "average": {
+                        "value": {
+                            "central": 0.851782708788,
+                            "uncertainty": 0.00109380637603
+                        }
+                    }
+                },
+                {
+                    "name": "BF_tau-_mu-_nutau_numubar",
+                    "average": {
+                        "value": {
+                            "central": 0.845234718534,
+                            "uncertainty": [
+                                -0.00104,
+                                0.00105
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "BF_tau-_mu-_nutau_numubar",
+                    "average": {
+                        "value": {
+                            "central": 0.173595737742,
+                            "statistical": 0.000367772990323,
+                            "systematic": 0.000367772990323
+                        }
+                    }
+                }
+            ],
+            "averages_correlation": [
+                [
+                    1,
+                    0.983063,
+                    0.313935
+                ],
+                [
+                    0.983063,
+                    1,
+                    0.328122
+                ],
+                [
+                    0.313935,
+                    0.328122,
+                    1
+                ]
+            ],
+            "inputs": [
+                {
+                    "name": "BF_tau-_mu-_nutau_numubar",
+                    "comment": "This is a comment for the input",
+                    "sources": [
+                        {
+                            "name": "ALEPH2005qgp",
+                            "comment": "This is a comment for the input. Can be used to point to specific measurement in paper",
+                            "value": {
+                                "central": 0.17319,
+                                "statistical": 0.0007,
+                                "systematic": 0.00032
+                            },
+                            "references": {
+                                "bibtex": "ALEPH:2005qgp",
+                                "pub": "Phys. Rept. 421 (2005) 191",
+                                "doi": "10.1016/j.physrep.2005.06.007",
+                                "arxiv": "hep-ex/0506072",
+                                "url": "https://mywebpage.com/aleph2005"
+                            }
+                        },
+                        {
+                            "name": "EXP2:2025aa",
+                            "value": {
+                                "central": 0.17325,
+                                "statistical": [
+                                    -0.00095,
+                                    0.00097
+                                ],
+                                "systematic": [
+                                    -0.00071,
+                                    0.00080
+                                ]
+                            },
+                            "references": {
+                                "bibtex": "EXP2:2025aa",
+                                "pub": "Eur. Phys. J. C 10 (1999) 201",
+                                "doi": "10.1007/s100520050583"
+                            }
+                        },
+                        {
+                            "name": "EXP3:2025bb",
+                            "value": {
+                                "central": 0.1734,
+                                "uncertainty": 0.0009
+                            },
+                            "references": {
+                                "bibtex": "EXP3:2025bb",
+                                "pub": "Phys. Lett. B 551 (2003) 35--48",
+                                "doi": "10.1016/S0370-2693(02)03020-4",
+                                "arxiv": "hep-ex/0211066"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "BF_tau-_e-_nutau_numebar",
+                    "sources": [
+                        {
+                            "name": "ALEPH2005qgp",
+                            "value": {
+                                "central": 0.17319,
+                                "statistical": 0.0007,
+                                "systematic": 0.00032
+                            },
+                            "references": {
+                                "bibtex": "ALEPH:2005qgp"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "tau- upper limits",
+            "fit": {
+                "chi2": 0.5,
+                "ndf": 1,
+                "p": 0.5
+            },
+            "averages": [
+                {
+                    "name": "BF_tau-_mu-_mu-_mu+",
+                    "average": {
+                        "value": {
+                            "upperlimit": 1.2e-7
+                        }
+                    }
+                }
+            ],
+            "averages_correlation": [
+                [
+                    1
+                ]
+            ],
+            "inputs": [
+                {
+                    "name": "BF_tau-_mu-_mu-_mu+",
+                    "sources": [
+                        {
+                            "name": "ALEPH2005",
+                            "value": {
+                                "central": 0.17319,
+                                "statistical": 0.0007,
+                                "systematic": 0.00032
+                            },
+                            "references": {
+                                "bibtex": "ALEPH:2005qgp"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Lifetimes and widths",
+            "fit": {
+                "chi2": 1.5,
+                "ndf": 1,
+                "p": 0.2
+            },
+            "averages": [
+                {
+                    "name": "LT_Bs0",
+                    "average": {
+                        "value": {
+                            "unit": "ps",
+                            "central": 0.173595737742,
+                            "uncertainty": 0.000367772990323
+                        }
+                    }
+                },
+                {
+                    "name": "DG_Bs0",
+                    "average": {
+                        "value": {
+                            "unit": "ps",
+                            "central": 0.6,
+                            "statistical": [
+                                -0.04,
+                                0.05
+                            ],
+                            "systematic": [
+                                -0.01,
+                                0.02
+                            ]
+                        }
+                    }
+                }
+            ],
+            "averages_correlation": [
+                [
+                    1,
+                    0.5
+                ],
+                [
+                    0.5,
+                    1
+                ]
+            ],
+            "contours": [
+                {
+                    "name": "Contour plot of lifetime and width",
+                    "x": {
+                        "name": "LT_Bs0",
+                        "unit": "ps"
+                    },
+                    "y": {
+                        "name": "DG_Bs0",
+                        "unit": "ps"
+                    },
+                    "CL": 0.68,
+                    "points": [
+                        [
+                            0.173,
+                            0.6
+                        ],
+                        [
+                            0.174,
+                            0.61
+                        ],
+                        [
+                            0.175,
+                            0.62
+                        ]
+                    ]
+                }
+            ],
+            "scans": [
+                {
+                    "name": "2D Scan of LT_Bs0 and DG_Bs0",
+                    "x": {
+                        "name": "LT_Bs0",
+                        "unit": "ps",
+                        "values": [
+                            0.1730,
+                            0.1735,
+                            0.1740,
+                            0.1745,
+                            0.1750,
+                            0.1755,
+                            0.1760,
+                            0.1765,
+                            0.1770,
+                            0.1780
+                        ]
+                    },
+                    "y": {
+                        "name": "DG_Bs0",
+                        "unit": "ps",
+                        "values": [
+                            0.601,
+                            0.602,
+                            0.603,
+                            0.604
+                        ]
+                    },
+                    "points": [
+                        [
+                            0.9,
+                            0.9,
+                            0.9,
+                            0.9
+                        ],
+                        [
+                            0.8,
+                            0.8,
+                            0.8,
+                            0.8
+                        ],
+                        [
+                            0.7,
+                            0.7,
+                            0.7,
+                            0.7
+                        ],
+                        [
+                            0.6,
+                            0.6,
+                            0.6,
+                            0.6
+                        ],
+                        [
+                            0.5,
+                            0.5,
+                            0.5,
+                            0.5
+                        ],
+                        [
+                            0.6,
+                            0.6,
+                            0.6,
+                            0.6
+                        ],
+                        [
+                            0.7,
+                            0.7,
+                            0.7,
+                            0.7
+                        ],
+                        [
+                            0.8,
+                            0.8,
+                            0.8,
+                            0.8
+                        ],
+                        [
+                            0.9,
+                            0.9,
+                            0.9,
+                            0.9
+                        ],
+                        [
+                            1.2,
+                            1.2,
+                            1.2,
+                            1.2
+                        ]
+                    ]
+                },
+                {
+                    "name": "1D Scan of LT_Bs0",
+                    "x": {
+                        "name": "LT_Bs0",
+                        "unit": "ps",
+                        "values": [
+                            0.1730,
+                            0.1735,
+                            0.1740,
+                            0.1745,
+                            0.1750,
+                            0.1755,
+                            0.1760,
+                            0.1765,
+                            0.1770,
+                            0.1780
+                        ]
+                    },
+                    "points": [
+                        0.9,
+                        0.8,
+                        0.7,
+                        0.6,
+                        0.5,
+                        0.6,
+                        0.7,
+                        0.8,
+                        0.9,
+                        1.2
+                    ]
+                }
+            ],
+            "inputs": [
+                {
+                    "name": "LT_Bs0",
+                    "sources": [
+                        {
+                            "name": "EXP3:2025bb",
+                            "value": {
+                                "unit": "fs",
+                                "central": 534.5,
+                                "uncertainty": 0.0009
+                            },
+                            "references": {
+                                "bibtex": "EXP3:2025bb",
+                                "pub": "Phys. Lett. B 551 (2003) 35--48",
+                                "doi": "10.1016/S0370-2693(02)03020-4",
+                                "arxiv": "hep-ex/0211066"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "DG_Bs0",
+                    "sources": [
+                        {
+                            "name": "EXP3:2025bb",
+                            "value": {
+                                "unit": "ps",
+                                "central": 0.7,
+                                "uncertainty": 0.1
+                            },
+                            "references": {
+                                "bibtex": "EXP3:2025bb",
+                                "pub": "Phys. Lett. B 551 (2003) 35--48",
+                                "doi": "10.1016/S0370-2693(02)03020-4",
+                                "arxiv": "hep-ex/0211066"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Partial B0 to pi l nu branching fractions",
+            "fit": {
+                "p": 0.4
+            },
+            "averages": [
+                {
+                    "name": "BR_B0_pi-_ell+_nuell__differential",
+                    "intervals": [
+                        [
+                            0.0,
+                            2.0
+                        ],
+                        [
+                            2.0,
+                            4.0
+                        ]
+                    ],
+                    "comment": "This is a comment for the measurement",
+                    "average": {
+                        "value": {
+                            "unit": "GeV^-2",
+                            "central": [
+                                66.3e-7,
+                                69.9e-7
+                            ],
+                            "uncertainty": [
+                                6.1e-7,
+                                4.5e-7
+                            ]
+                        }
+                    }
+                }
+            ],
+            "averages_correlation": [
+                [
+                    1,
+                    -0.009
+                ],
+                [
+                    -0.009,
+                    1
+                ]
+            ],
+            "inputs": [
+                {
+                    "name": "BR_B0_pi-_ell+_nuell__differential",
+                    "intervals": [
+                        [
+                            0.0,
+                            2.0
+                        ],
+                        [
+                            2.0,
+                            4.0
+                        ]
+                    ],
+                    "sources": [
+                        {
+                            "name": "Belle_untag",
+                            "value": {
+                                "central": [
+                                    58.7e-7,
+                                    76.3e-7
+                                ],
+                                "statistical": [
+                                    6.1e-7,
+                                    16.7e-7
+                                ]
+                            },
+                            "references": {
+                                "bibtex": "Belle:XXXX"
+                            }
+                        },
+                        {
+                            "name": "Belle_tagged",
+                            "value": {
+                                "central": [
+                                    97.5e-7,
+                                    53.0e-7
+                                ],
+                                "statistical": [
+                                    13.8e-7,
+                                    8.0e-7
+                                ]
+                            },
+                            "references": {
+                                "bibtex": "Belle:XXXX"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "inputs_correlation": [
+                [
+                    1.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                [
+                    0.0,
+                    1.0,
+                    0.0,
+                    0.0
+                ],
+                [
+                    0.0,
+                    0.0,
+                    1.0,
+                    -0.5
+                ],
+                [
+                    -1.0,
+                    0.0,
+                    -0.5,
+                    1.0
+                ]
+            ]
+        }
+    ]
+}

@@ -1,3 +1,6 @@
 requests>=2.28
 pytest>=7.0
 python-dotenv>=1.2
+pydantic>=2.0
+zenodo-client>=0.3
+python-dateutil>=2.8
