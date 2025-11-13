@@ -1,3 +1,4 @@
+from typing import List
 from pydantic import BaseModel
 
 
@@ -13,13 +14,12 @@ class Record(BaseModel):
     created: str
     updated: str
     links: dict
-    files: list
+    files: List[File]
 
 
 class Template(BaseModel):
-    id: str
-    doi: str
     title: str
     created: str
     updated: str
-    links: dict
+    version: str
+    jsons: List[dict]

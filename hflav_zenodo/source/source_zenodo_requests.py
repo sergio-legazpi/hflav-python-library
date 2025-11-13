@@ -10,6 +10,7 @@ import requests
 import os
 from datetime import datetime
 
+from hflav_zenodo.models.models import File, Record, Template
 from source.source_interface import SourceInterface
 
 
@@ -48,14 +49,21 @@ class SourceZenodoRequest(SourceInterface):
         results = []
         for hit in data.get("hits", {}).get("hits", []):
             results.append(
-                {
-                    "id": hit.get("id"),
-                    "doi": hit.get("doi"),
-                    "title": hit.get("metadata", {}).get("title"),
-                    "created": hit.get("created"),
-                    "updated": hit.get("updated"),
-                    "links": hit.get("links", {}),
-                }
+                Record(
+                    id=hit.get("id"),
+                    doi=hit.get("doi"),
+                    title=hit.get("metadata", {}).get("title"),
+                    created=hit.get("created"),
+                    updated=hit.get("updated"),
+                    links=hit.get("links", {}),
+                    files=[
+                        File(
+                            name=file.get("key"),
+                            download_url=file.get("links", {}).get("self"),
+                        )
+                        for file in hit.get("files", [])
+                    ],
+                )
             )
 
         return results
@@ -81,29 +89,20 @@ class SourceZenodoRequest(SourceInterface):
 
         all_versions = []
         for version in versions_data.get("hits", {}).get("hits", []):
-            version_info = {
-                "id": version.get("id"),
-                "doi": version.get("doi"),
-                "title": version.get("metadata", {}).get("title"),
-                "version": version.get("metadata", {}).get("version"),
-                "created": version.get("created"),
-                "updated": version.get("updated"),
-                "files": [],
-            }
 
-            # Get files for this version
-            files = version.get("files", [])
-            for file in files:
-                version_info["files"].append(
-                    {
-                        "filename": file.get("key"),
-                        "size": file.get("size"),
-                        "checksum": file.get("checksum"),
-                        "download_link": file.get("links", {}).get("self"),
-                    }
+            all_versions.append(
+                Template(
+                    title=version.get("metadata", {}).get("title"),
+                    created=version.get("created"),
+                    updated=version.get("updated"),
+                    version=version.get("metadata", {}).get("version"),
+                    jsons=[
+                        item
+                        for item in version.get("files", [])
+                        if item["key"].endswith(".json")
+                    ],
                 )
-
-            all_versions.append(version_info)
+            )
 
         return all_versions
 
