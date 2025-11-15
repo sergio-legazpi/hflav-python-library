@@ -32,9 +32,7 @@ class SourceInterface(ABC):
         """
 
     @abstractmethod
-    def get_correct_template_by_date(
-        self, date: Optional[datetime.date] = None
-    ) -> Template:
+    def get_correct_template_by_date(self, date: Optional[datetime] = None) -> Template:
         """Search the correct template version to the date given.
 
         Args:
@@ -45,12 +43,22 @@ class SourceInterface(ABC):
         """
 
     @abstractmethod
-    def get_file_by_id(
+    def get_record(self, recid: int) -> Record:
+        """Fetch a single record by id (record id as shown in Zenodo URL).
+        Args:
+                recid: integer id of the record
+
+        Returns:
+                A dict representing the JSON response from the backend.
+        """
+
+    @abstractmethod
+    def download_file_by_id_and_filename(
         self,
         id: int,
         filename: Optional[str] = None,
         dest_path: Optional[str] = None,
-    ) -> File:
+    ) -> str:
         """Download a file referenced by a record and return the saved path.
 
         Args:

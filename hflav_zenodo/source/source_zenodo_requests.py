@@ -48,29 +48,11 @@ class SourceZenodoRequest(SourceInterface):
 
         results = []
         for hit in data.get("hits", {}).get("hits", []):
-            results.append(
-                Record(
-                    id=hit.get("id"),
-                    doi=hit.get("doi"),
-                    title=hit.get("metadata", {}).get("title"),
-                    created=hit.get("created"),
-                    updated=hit.get("updated"),
-                    links=hit.get("links", {}),
-                    files=[
-                        File(
-                            name=file.get("key"),
-                            download_url=file.get("links", {}).get("self"),
-                        )
-                        for file in hit.get("files", [])
-                    ],
-                )
-            )
+            results.append(Record(**hit))
 
         return results
 
-    def get_correct_template_by_date(
-        self, date: Optional[datetime.date] = None
-    ) -> Dict[str, Any]:
+    def _get_all_template_versions(self) -> List[Template]:
         record_url = f"{self.DEFAULT_BASE}/records/{self.CONCEPT_ID_TEMPLATE}"
         response = requests.get(record_url, timeout=30)
         response.raise_for_status()
@@ -90,30 +72,35 @@ class SourceZenodoRequest(SourceInterface):
         all_versions = []
         for version in versions_data.get("hits", {}).get("hits", []):
 
-            all_versions.append(
-                Template(
-                    title=version.get("metadata", {}).get("title"),
-                    created=version.get("created"),
-                    updated=version.get("updated"),
-                    version=version.get("metadata", {}).get("version"),
-                    jsons=[
-                        item
-                        for item in version.get("files", [])
-                        if item["key"].endswith(".json")
-                    ],
-                )
-            )
+            all_versions.append(Template(**version))
 
         return all_versions
 
-    def get_record(self, recid: int) -> Dict[str, Any]:
+    def get_correct_template_by_date(self, date: Optional[datetime] = None) -> Template:
+        templates = self._get_all_template_versions()
+        if date is None:
+            # Return the latest version
+            latest_template = max(templates, key=lambda t: t.created)
+            return latest_template
+        else:
+            # Find the latest template before or on the given date
+            valid_templates = [
+                t for t in templates if t.created.timestamp() <= date.timestamp()
+            ]
+            if not valid_templates:
+                raise ValueError(f"No template versions found before date {date}")
+            correct_template = max(valid_templates, key=lambda t: t.created)
+            return correct_template
+
+    def get_record(self, recid: int) -> Record:
         """Fetch a single record by id (record id as shown in Zenodo URL)."""
         url = f"{self.DEFAULT_BASE}/records/{recid}"
         resp = requests.get(url, timeout=30)
         resp.raise_for_status()
-        return resp.json()
+        data = resp.json()
+        return Record(**data)
 
-    def get_file_by_id(
+    def download_file_by_id_and_filename(
         self,
         id: int,
         filename: Optional[str] = None,
@@ -132,22 +119,8 @@ class SourceZenodoRequest(SourceInterface):
         else:
             raise ValueError("record_or_id must be an int or a record dict")
 
-        files = record.get("files") or []
-        if not files:
-            raise ValueError("Record contains no files")
-
-        chosen = None
-        if filename:
-            for f in files:
-                if f.get("key") == filename or f.get("filename") == filename:
-                    chosen = f
-                    break
-        if not chosen:
-            chosen = files[0]
-
-        # file links: try 'links'->'download' or 'links'->'self'
-        links = chosen.get("links", {})
-        url = links.get("download") or links.get("self") or chosen.get("url")
+        chosen = record.get_file_by_name(filename) if filename else record.files[0]
+        url = chosen.download_url
         if not url:
             raise ValueError("No download link found for file")
 
@@ -156,11 +129,7 @@ class SourceZenodoRequest(SourceInterface):
 
         dest_is_dir = dest_path and os.path.isdir(dest_path)
         if dest_path is None or dest_is_dir:
-            filename_on_disk = (
-                chosen.get("key")
-                or chosen.get("filename")
-                or f"record_{record.get('id')}_file"
-            )
+            filename_on_disk = chosen.name or f"record_{record.id}_file"
             out_path = os.path.join(dest_path or os.getcwd(), filename_on_disk)
         else:
             out_path = dest_path
