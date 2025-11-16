@@ -11,7 +11,7 @@ import os
 from datetime import datetime
 
 from hflav_zenodo.models.models import File, Record, Template
-from source.source_interface import SourceInterface
+from hflav_zenodo.source.source_interface import SourceInterface
 
 
 class SourceZenodoRequest(SourceInterface):

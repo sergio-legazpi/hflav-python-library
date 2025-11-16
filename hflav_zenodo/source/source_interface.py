@@ -28,7 +28,7 @@ class SourceInterface(ABC):
                 page: page number
 
         Returns:
-                A dict representing the JSON response from the backend.
+                A list of records.
         """
 
     @abstractmethod
@@ -39,7 +39,7 @@ class SourceInterface(ABC):
                 date: date to search the correct template for
 
         Returns:
-                A dict representing the JSON response from the backend.
+                A Template instance.
         """
 
     @abstractmethod
@@ -49,7 +49,7 @@ class SourceInterface(ABC):
                 recid: integer id of the record
 
         Returns:
-                A dict representing the JSON response from the backend.
+                A Record instance.
         """
 
     @abstractmethod
