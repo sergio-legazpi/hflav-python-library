@@ -37,7 +37,7 @@ class DynamicConversor(BaseModel):
         cls, json_template: Union[str, bytes, os.PathLike, Dict]
     ) -> Dict[str, Type[BaseModel]]:
         """
-        Create Pydantic models from a JSON template with ALL fields optional
+        Create Pydantic models from a JSON template with ALL fields as Union and Optional
 
         Args:
             json_template: JSON string, file path, or dict with example data
@@ -51,12 +51,17 @@ class DynamicConversor(BaseModel):
 
         def _create_model(name: str, data: Any) -> Type[BaseModel]:
             """
-            Recursive function to create models with all fields optional
+            Recursive function to create models with all fields as Union and Optional
             """
             if not isinstance(data, dict):
-                # For non-dict data, create a simple model with optional value
-                field_type = cls._infer_type(data)
-                return create_model(name, value=(Optional[field_type], None))
+                # For non-dict data, create a simple model with Union and Optional
+                field_types = cls._infer_types(data)
+                union_type = (
+                    Union[tuple(field_types)]
+                    if len(field_types) > 1
+                    else field_types[0]
+                )
+                return create_model(name, value=(Optional[union_type], None))
 
             fields = {}
 
@@ -67,23 +72,43 @@ class DynamicConversor(BaseModel):
                     # Create sub-model recursively
                     submodel_name = f"{name}_{key}"
                     nested_model = _create_model(submodel_name, value)
-                    fields[field_name] = (Optional[nested_model], None)
+                    field_types = [nested_model, type(None)]
+                    fields[field_name] = (Optional[Union[tuple(field_types)]], None)
                 elif isinstance(value, list) and value:
-                    # Handle lists
-                    first_item = value[0]
-                    if isinstance(first_item, dict):
-                        # List of objects
-                        submodel_name = f"{name}_{key}_item"
-                        model_item = _create_model(submodel_name, first_item)
-                        fields[field_name] = (Optional[List[model_item]], None)  # type: ignore
+                    # Handle lists - collect all types from all items
+                    item_types = set()
+                    for item in value:
+                        if isinstance(item, dict):
+                            # List of objects
+                            submodel_name = f"{name}_{key}_item"
+                            model_item = _create_model(submodel_name, item)
+                            item_types.add(model_item)
+                        else:
+                            # Collect all primitive types found in the list
+                            primitive_types = cls._infer_types(item)
+                            item_types.update(primitive_types)
+
+                    if item_types:
+                        # Create Union type for list items
+                        list_item_type = (
+                            Union[tuple(item_types)]
+                            if len(item_types) > 1
+                            else next(iter(item_types))
+                        )
+                        list_type = List[list_item_type]  # type: ignore
+                        fields[field_name] = (Optional[list_type], None)
                     else:
-                        # List of primitive types
-                        item_type = cls._infer_type(first_item)
-                        fields[field_name] = (Optional[List[item_type]], None)  # type: ignore
+                        # Empty list or no types found
+                        fields[field_name] = (Optional[List[Any]], None)
                 else:
-                    # Primitive type - all fields are optional
-                    field_type = cls._infer_type(value)
-                    fields[field_name] = (Optional[field_type], None)
+                    # Primitive type - all fields are Union and Optional
+                    field_types = cls._infer_types(value)
+                    union_type = (
+                        Union[tuple(field_types)]
+                        if len(field_types) > 1
+                        else field_types[0]
+                    )
+                    fields[field_name] = (Optional[union_type], None)
 
             return create_model(name, **fields)
 
@@ -94,28 +119,45 @@ class DynamicConversor(BaseModel):
         return models
 
     @classmethod
-    def _infer_type(cls, value: Any) -> Type:
-        """Infer the appropriate type for a value"""
-        if value is None:
-            return Any
-        elif isinstance(value, bool):
-            return bool
-        elif isinstance(value, int):
-            return int
-        elif isinstance(value, float):
-            return float
-        elif isinstance(value, str):
-            return str
-        elif isinstance(value, list):
-            if value:
-                item_type = cls._infer_type(value[0])
-                return List[item_type]  # type: ignore
-            return List[Any]  # type: ignore
-        elif isinstance(value, dict):
-            # For nested dicts, we'll handle recursively in _create_model
-            return Any
-        else:
-            return Any
+    def _infer_types(cls, value: Any) -> List[Type]:
+        """Infer all possible types for a value, collecting multiple types"""
+        types_found = set()
+
+        def _collect_types(val: Any):
+            if val is None:
+                types_found.add(type(None))
+            elif isinstance(val, bool):
+                types_found.add(bool)
+            elif isinstance(val, int):
+                types_found.add(int)
+            elif isinstance(val, float):
+                types_found.add(float)
+            elif isinstance(val, str):
+                types_found.add(str)
+            elif isinstance(val, list):
+                types_found.add(list)
+                # Recursively collect types from list items
+                for item in val:
+                    _collect_types(item)
+            elif isinstance(val, dict):
+                types_found.add(dict)
+                # Recursively collect types from dict values
+                for dict_val in val.values():
+                    _collect_types(dict_val)
+            else:
+                types_found.add(type(val))
+
+        _collect_types(value)
+
+        # Convert to list and ensure type(None) is included for Optional compatibility
+        result_types = list(types_found)
+
+        # If we only found basic types and no None, ensure Optional can work
+        if type(None) not in result_types:
+            # We'll let the caller handle adding None for Optional
+            pass
+
+        return result_types if result_types else [Any]
 
     @classmethod
     def create_instance(

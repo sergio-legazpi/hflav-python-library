@@ -2,6 +2,7 @@ import json
 from typing import Optional, List, Type
 
 from pydantic import BaseModel
+from hflav_zenodo.processing.data_visualizer import DataVisualizer
 from hflav_zenodo.conversors.dynamic_conversor import DynamicConversor
 from hflav_zenodo.exceptions.source_exceptions import DataAccessException
 from hflav_zenodo.models.models import Record
@@ -85,6 +86,7 @@ class Services:
         dynamic_class = DynamicConversor.create_instance(ExperimentData, file_path)
 
         print("Data loaded successfully. This is the content:")
-        print(json.dumps(dynamic_class.model_dump(), indent=4, ensure_ascii=False))
+        DataVisualizer.print_summary(dynamic_class, title=record.title)
+        DataVisualizer.print_simple(dynamic_class, title=record.title)
 
         return dynamic_class

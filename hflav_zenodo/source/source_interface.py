@@ -10,17 +10,15 @@ from hflav_zenodo.models.models import Record, Template
 class SourceInterface(ABC):
     """Abstract interface for source clients used by HFLAV.
 
-    This defines the public contract implemented by `ZenodoClient` in
-    `source_zenodo.py`. Implementations must provide the methods below and
-    follow the documented input/output shapes (they generally return JSON-like
-    dicts or file paths).
+    This defines the public contract to access HFLAV data. Implementations must provide the methods below and
+    follow the documented input/output shapes.
     """
 
     @abstractmethod
     def get_records_by_name(
         self, query: Optional[str] = None, size: int = 10, page: int = 1
     ) -> List[Record]:
-        """Search records and return the JSON-decoded response.
+        """Search records and return the records.
 
         Args:
                 query: optional free-text query
