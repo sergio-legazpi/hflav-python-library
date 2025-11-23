@@ -1,4 +1,5 @@
 import json
+from types import SimpleNamespace
 from typing import Any, Type
 
 from pydantic import BaseModel
@@ -14,5 +15,5 @@ class DataVisualizer:
         print_json(json.dumps(schema))
 
     @staticmethod
-    def print_json_data(data: Type[BaseModel]):
-        print_json(data.model_dump_json(indent=4))
+    def print_json_data(data: SimpleNamespace):
+        print_json(json.dumps(data.__dict__, indent=4))

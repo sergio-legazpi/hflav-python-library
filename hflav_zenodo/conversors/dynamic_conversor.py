@@ -1,17 +1,13 @@
-from dataclasses import fields
 import json
-import os
 from types import SimpleNamespace
-from typing import Dict, Type, Union, Optional
 
 from genson import SchemaBuilder
 import jsonschema
-from pydantic import BaseModel, ConfigDict, Field, create_model
 from hflav_zenodo.processing.data_visualizer import DataVisualizer
 
 
-class DynamicConversor(BaseModel):
-    """Base class to create Pydantic models dynamically from JSON templates"""
+class DynamicConversor:
+    """Base class to create models dynamically from JSON templates"""
 
     def _generate_json_schema(cls, file_path: str):
         builder = SchemaBuilder()
@@ -29,7 +25,7 @@ class DynamicConversor(BaseModel):
     @classmethod
     def generate_instance_from_template_and_data(
         cls, template_path: str, data_path: str
-    ) -> Type[BaseModel]:
+    ) -> SimpleNamespace:
         schema = cls._generate_json_schema(
             cls,
             template_path,
