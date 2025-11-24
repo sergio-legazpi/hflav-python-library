@@ -1,5 +1,5 @@
-import json
-from typing import Optional, List, Type
+from types import SimpleNamespace
+from typing import Optional, List
 
 from pydantic import BaseModel
 from hflav_zenodo.conversors.conversor_interface import ConversorInterface
@@ -42,7 +42,7 @@ class Services:
 
     def search_and_load_data_file(
         self, query: Optional[str] = None, size: int = 10, page: int = 1
-    ) -> Type[BaseModel]:
+    ) -> SimpleNamespace:
         selected_record = 0
         selected_file = 0
         while selected_record == 0:
@@ -66,7 +66,7 @@ class Services:
         record_id: int,
         filename: str,
         dest_path: Optional[str] = None,
-    ) -> Type[BaseModel]:
+    ) -> SimpleNamespace:
 
         logger.info(f"Getting record with id {record_id}...")
         record = self._source.get_record(recid=record_id)
