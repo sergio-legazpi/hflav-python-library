@@ -12,6 +12,9 @@ logger = get_logger(__name__)
 
 
 class DynamicConversor(ConversorInterface):
+    def __init__(self):
+        self._visualizer = DataVisualizer()
+
     def _to_namespace(self, obj):
         if isinstance(obj, dict):
             return SimpleNamespace(**{k: self._to_namespace(v) for k, v in obj.items()})
@@ -19,9 +22,6 @@ class DynamicConversor(ConversorInterface):
             return [self._to_namespace(item) for item in obj]
         else:
             return obj
-
-    def __init__(self):
-        self._visualizer = DataVisualizer()
 
     def _generate_json_schema(self, file_path: str):
         builder = SchemaBuilder()
