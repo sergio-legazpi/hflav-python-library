@@ -12,6 +12,13 @@ logger = get_logger(__name__)
 
 
 class DynamicConversor(ConversorInterface):
+    def _to_namespace(self, obj):
+        if isinstance(obj, dict):
+            return SimpleNamespace(**{k: self._to_namespace(v) for k, v in obj.items()})
+        elif isinstance(obj, list):
+            return [self._to_namespace(item) for item in obj]
+        else:
+            return obj
 
     def __init__(self):
         self._visualizer = DataVisualizer()
@@ -47,4 +54,4 @@ class DynamicConversor(ConversorInterface):
         except jsonschema.ValidationError as e:
             raise StructureException(details=str(e))
 
-        return SimpleNamespace(**data_dict)
+        return self._to_namespace(data_dict)
