@@ -83,6 +83,14 @@ class Services:
         logger.info(
             f"Template found: {template.title}, with version {template.version}"
         )
+
+        logger.info(f"Downloading record file {filename}...")
+        file_path = self._source.download_file_by_id_and_filename(
+            id=record_id, filename=filename, dest_path=dest_path
+        )
+        logger.info(f"Downloaded record file {filename} to {file_path}")
+
+        logger.info("Setting up the chain of responsibility for schema handling...")
         zenodo_schema_handler = ZenodoSchemaHandler(
             source=self._source, conversor=self._conversor, visualizer=self._visualizer
         )
@@ -96,11 +104,6 @@ class Services:
         zenodo_schema_handler.set_next(gitlab_schema_handler).set_next(
             template_schema_handler
         )
-
-        logger.info(f"Downloading record file {filename}...")
-        file_path = self._source.download_file_by_id_and_filename(
-            id=record_id, filename=filename, dest_path=dest_path
-        )
-        logger.info(f"Downloaded record file {filename} to {file_path}")
+        logger.info("Chain of responsibility for schema handling set up successfully.")
 
         return zenodo_schema_handler.handle(template, file_path)
