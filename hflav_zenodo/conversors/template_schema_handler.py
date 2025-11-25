@@ -26,16 +26,16 @@ class TemplateSchemaHandler(ConversorHandler):
 
         logger.info(f"Template downloaded: Template at {template_path}")
         logger.info(f"Loading data from file {data_path} into model...")
-        dynamic_class = self._conversor.generate_instance_from_template_and_data(
-            template_path, data_path
+        schema = self._conversor.generate_json_schema(
+            template_path,
         )
-
-        logger.info("Data loaded successfully. This is the content:")
-        self._visualizer.print_json_data(dynamic_class)
-        pass
+        dynamic_class = self._conversor.generate_instance_from_schema_and_data(
+            schema, data_path
+        )
+        return dynamic_class
 
     def can_handle(self, template: Template, data_path: str) -> bool:
-        return template.jsontemplate is not None
+        return template.jsontemplate
 
     def set_next(self, handler: "ConversorHandler") -> "ConversorHandler":
         self._next_handler = handler

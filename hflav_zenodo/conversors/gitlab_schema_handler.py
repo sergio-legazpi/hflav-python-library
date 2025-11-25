@@ -20,7 +20,7 @@ class GitlabSchemaHandler(ConversorHandler):
             logger.info(
                 "GitlabSchemaHandler: Cannot handle the request, passing to next handler..."
             )
-            self._next_handler.handle(template, data_path)
+            return self._next_handler.handle(template, data_path)
         pass
 
     def can_handle(self, template: Template, data_path: str) -> bool:

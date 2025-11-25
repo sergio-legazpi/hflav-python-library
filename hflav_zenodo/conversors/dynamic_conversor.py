@@ -33,7 +33,7 @@ class DynamicConversor(ConversorInterface):
             for item in obj:
                 self._avoid_extra_fields(item)
 
-    def _generate_json_schema(self, file_path: str):
+    def generate_json_schema(self, file_path: str) -> dict:
         builder = SchemaBuilder()
 
         with open(file_path, "r", encoding="utf-8") as file:
@@ -44,18 +44,16 @@ class DynamicConversor(ConversorInterface):
 
         schema["$schema"] = "http://json-schema.org/draft-07/schema#"
 
+        self._avoid_extra_fields(schema)
+
         return schema
 
-    def generate_instance_from_template_and_data(
-        self, template_path: str, data_path: str
+    def generate_instance_from_schema_and_data(
+        self, schema: dict, data_path: str
     ) -> SimpleNamespace:
-        if not template_path or not data_path:
-            raise ValueError("Template path and data path must be provided.")
-        schema = self._generate_json_schema(
-            template_path,
-        )
-        self._avoid_extra_fields(schema)
-        logger.info("Template JSON Schema:")
+        if not schema or not data_path:
+            raise ValueError("Schema and data path must be provided.")
+        logger.info("JSON Schema:")
         self._visualizer.print_schema(schema)
 
         with open(data_path, "r", encoding="utf-8") as file:
@@ -64,5 +62,7 @@ class DynamicConversor(ConversorInterface):
             jsonschema.validate(instance=data_dict, schema=schema)
         except jsonschema.ValidationError as e:
             raise StructureException(details=str(e))
-
-        return self._to_namespace(data_dict)
+        model = self._to_namespace(data_dict)
+        logger.info("Data loaded successfully. This is the content:")
+        self._visualizer.print_json_data(model)
+        return model

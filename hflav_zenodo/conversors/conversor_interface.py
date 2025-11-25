@@ -10,20 +10,24 @@ class ConversorInterface(ABC):
     """
 
     @abstractmethod
-    def generate_instance_from_template_and_data(
-        self, template_path: str, data_path: str
+    def generate_json_schema(self, file_path: str) -> dict:
+        """Generate a JSON schema from a data file."""
+        pass
+
+    @abstractmethod
+    def generate_instance_from_schema_and_data(
+        self, schema: dict, data_path: str
     ) -> SimpleNamespace:
-        """Generate an instance from a template and data files.
+        """Generate an instance from a schema and data files.
 
         Args:
-                template_path: path to the JSON template file
+                schema: JSON schema as a dictionary
                 data_path: path to the JSON data file
 
         Returns:
-                An instance validated and generated from the template and data files
-
+                An instance validated and generated from the schema and data files
         Raises:
-                ValueError: If the template or data files are invalid.
-                StructureException: If the data structure does not match the template format.
+                ValueError: If the schema or data files are invalid.
+                StructureException: If the data structure does not match the schema format.
 
         """
