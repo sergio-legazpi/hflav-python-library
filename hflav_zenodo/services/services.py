@@ -57,7 +57,7 @@ class Services:
                 logger.info(f"Selected record: {record.title}")
                 logger.info("Select a file by number:")
                 selected_file = int(input())
-                filename = record.files[selected_file - 1].name
+                filename = record.children[selected_file - 1].name
                 logger.info(f"Selected file: {filename}")
                 return self.load_data_file(record_id=record.id, filename=filename)
 

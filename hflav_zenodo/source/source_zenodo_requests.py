@@ -1,10 +1,3 @@
-"""Zenodo client utilities for HFLAV data.
-
-This module provides a small wrapper around the Zenodo REST API to search
-and download records related to HFLAV. It's intentionally small and
-dependency-light (only `requests`).
-"""
-
 from typing import Optional, Dict, Any, List
 import requests
 import os
@@ -19,14 +12,6 @@ from hflav_zenodo.source.source_interface import SourceInterface
 
 
 class SourceZenodoRequest(SourceInterface):
-    """Simple Zenodo API client.
-
-    Basic contract
-    - Inputs: query strings, community name, record id
-    - Outputs: parsed JSON from Zenodo or downloaded file path
-    - Error modes: raises requests.exceptions on network errors; ValueError
-      on missing content.
-    """
 
     DEFAULT_BASE = "https://zenodo.org/api"
     DEFAULT_COMMUNITY = "hflav"
@@ -128,7 +113,7 @@ class SourceZenodoRequest(SourceInterface):
         record = self.get_record(id)
         if not filename:
             raise ValueError("filename must be a string")
-        chosen = record.get_file_by_name(filename)
+        chosen: File = record.get_child(filename)
         url = chosen.download_url
         if not url:
             raise DataNotFoundException("No download link found for file")
