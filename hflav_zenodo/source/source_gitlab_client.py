@@ -1,7 +1,10 @@
 import json
 from gitlab import Gitlab, GitlabGetError
 
+from hflav_zenodo.logger import get_logger
 from hflav_zenodo.source.source_gitlab_interface import SourceGitlabInterface
+
+logger = get_logger(__name__)
 
 
 class SourceGitlabClient(SourceGitlabInterface):
@@ -22,7 +25,8 @@ class SourceGitlabClient(SourceGitlabInterface):
         try:
             return self.project.tags.get(tag_name).name
         except GitlabGetError as e:
-            print(f"Error getting tag {tag_name}: {e}")
+            logger.error(f"Error getting tag {tag_name}: {e}")
+            logger.info("Defaulting to 'main' branch.")
             return "main"
 
     def _search_schema(self, path=""):
@@ -35,7 +39,7 @@ class SourceGitlabClient(SourceGitlabInterface):
                     if item["name"].endswith(".schema"):
                         return item
         except Exception as e:
-            print(f"Error searching in {path}: {e}")
+            logger.error(f"Error searching schema inside hflav gitlab repository: {e}")
 
     def get_schema_inside_repository(self, tag_version="main") -> dict:
         schema = self._search_schema("")
