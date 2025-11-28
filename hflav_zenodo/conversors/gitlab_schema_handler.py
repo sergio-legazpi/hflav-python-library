@@ -4,6 +4,10 @@ from hflav_zenodo import logger
 
 from hflav_zenodo.conversors.conversor_handler import ConversorHandler
 from hflav_zenodo.conversors.conversor_interface import ConversorInterface
+from hflav_zenodo.exceptions.source_exceptions import (
+    NoSchemaFoundInsideGitlabRepository,
+    NoVersionTagFound,
+)
 from hflav_zenodo.models.models import Template
 from hflav_zenodo.processing.visualizer_interface import VisualizerInterface
 from hflav_zenodo.source.source_gitlab_interface import SourceGitlabInterface
@@ -47,12 +51,19 @@ class GitlabSchemaHandler(ConversorHandler):
         if not self.can_handle(template, data_path):
             logger.info("Cannot handle the request, passing to next handler...")
             return self._next_handler.handle(template, data_path)
-
-        schema_dict = self._source_gitlab_client.get_schema_inside_repository(
-            self._try_to_get_schema_version(data_path)
-        )
+        try:
+            schema_dict = self._source_gitlab_client.get_schema_inside_repository(
+                self._try_to_get_schema_version(data_path)
+            )
+        except (
+            ValueError,
+            NoSchemaFoundInsideGitlabRepository,
+            NoVersionTagFound,
+        ) as e:
+            logger.error(f"Error retrieving schema from GitLab: {e.message}")
+            logger.info("Passing to next handler...")
+            return self._next_handler.handle(template, data_path)
         logger.info("Schema retrieved successfully.")
-
         logger.info(f"Loading data from file {data_path} into model...")
         dynamic_class = self._conversor.generate_instance_from_schema_and_data(
             schema_dict, data_path

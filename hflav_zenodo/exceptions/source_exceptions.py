@@ -20,3 +20,25 @@ class DataNotFoundException(SourceException):
         self.message = message
         self.details = details
         super().__init__(self.message)
+
+
+class NoSchemaFoundInsideGitlabRepository(SourceException):
+    """Error when no schema is found inside the GitLab repository"""
+
+    def __init__(
+        self, message="No schema found inside the GitLab repository", details=None
+    ):
+        self.message = message
+        self.details = details
+        super().__init__(self.message)
+
+
+class NoVersionTagFound(SourceException):
+    """Error when no version tag is found inside the GitLab repository"""
+
+    def __init__(
+        self, message="No version tag found inside the GitLab repository", details=None
+    ):
+        self.message = message
+        self.details = details
+        super().__init__(self.message)

@@ -1,6 +1,10 @@
 import json
 from gitlab import Gitlab, GitlabGetError
 
+from hflav_zenodo.exceptions.source_exceptions import (
+    NoSchemaFoundInsideGitlabRepository,
+    NoVersionTagFound,
+)
 from hflav_zenodo.logger import get_logger
 from hflav_zenodo.source.source_gitlab_interface import SourceGitlabInterface
 
@@ -25,9 +29,10 @@ class SourceGitlabClient(SourceGitlabInterface):
         try:
             return self.project.tags.get(tag_name).name
         except GitlabGetError as e:
-            logger.error(f"Error getting tag {tag_name}: {e}")
-            logger.info("Defaulting to 'main' branch.")
-            return "main"
+            raise NoVersionTagFound(
+                message=f"Tag '{tag_name}' not found in the GitLab repository",
+                details=str(e),
+            )
 
     def _search_schema(self, path=""):
         try:
@@ -39,7 +44,10 @@ class SourceGitlabClient(SourceGitlabInterface):
                     if item["name"].endswith(".schema"):
                         return item
         except Exception as e:
-            logger.error(f"Error searching schema inside hflav gitlab repository: {e}")
+            raise NoSchemaFoundInsideGitlabRepository(
+                message="No schema found inside the GitLab repository",
+                details=str(e),
+            )
 
     def get_schema_inside_repository(self, tag_version="main") -> dict:
         schema = self._search_schema("")
