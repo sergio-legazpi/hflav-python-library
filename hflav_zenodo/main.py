@@ -5,6 +5,7 @@ from hflav_zenodo.filters.search_filters import (
     NotFilter,
     OrFilter,
     QueryBuilder,
+    SortOptions,
 )
 from hflav_zenodo.filters.zenodo_query import ZenodoQuery
 
@@ -30,6 +31,7 @@ query2 = (
 query = (
     QueryBuilder()
     .with_pagination(size=5, page=1)
+    .order_by(field=SortOptions.MOSTRECENT)
     .merge_filters(query1)
     .merge_filters(query2)
     .build()

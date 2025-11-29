@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import datetime
+from enum import Enum
 from typing import Any, Type, Union
 
 from dependency_injector.wiring import inject, Provide
@@ -95,12 +96,24 @@ class NotFilter(Filter):
         return " AND ".join(queries)
 
 
+class SortOptions(Enum):
+    MOSTRECENT = "mostrecent"
+    BESTMATCH = "bestmatch"
+
+
 # Builder to create complex queries
 class QueryBuilder:
+    """
+    Builder class for constructing complex queries with filters, sorting, and pagination.
+
+    To check all the fields available for filtering and sorting, refer to the Zenodo API documentation:
+    https://developers.zenodo.org/
+    """
+
     @inject
     def __init__(self, query: BaseQuery = Provide["base_query"]):
         self.filters = []
-        self.sorts = []
+        self.sort = SortOptions.MOSTRECENT.value
         self.page_size = 10
         self.page = 1
         self.query = query
@@ -125,9 +138,9 @@ class QueryBuilder:
         self.filters.append(ExistenceFilter(field, exists))
         return self
 
-    def order_by(self, field: str, asc: bool = True) -> "QueryBuilder":
-        direction = "asc" if asc else "desc"
-        self.sorts.append(f"{field} {direction}")
+    def order_by(self, field: SortOptions, desc: bool = False) -> "QueryBuilder":
+        direction = "-" if desc else ""
+        self.sort = direction + field.value
         return self
 
     def with_pagination(self, size: int = 10, page: int = 1) -> "QueryBuilder":
@@ -185,6 +198,7 @@ class QueryBuilder:
             >>> query = (
             ...     QueryBuilder()
             ...     .with_pagination(size=5, page=1)
+            ...     .order_by(field=SortOptions.MOSTRECENT)
             ...     .merge_filters(query1)
             ...     .merge_filters(query2)
             ...     .build()  # Uses default_operator default value for final combination
@@ -195,4 +209,4 @@ class QueryBuilder:
             if len(self.filters) > 1
             else self.filters[0] if self.filters else None
         )
-        return self.query(final_filter, self.sorts, self.page_size, self.page)
+        return self.query(final_filter, self.sort, self.page_size, self.page)

@@ -8,18 +8,6 @@ from hflav_zenodo.filters.search_filters import Filter
 class ZenodoQuery(BaseQuery):
     DEFAULT_COMMUNITY = "hflav"
 
-    def __init__(
-        self,
-        filter: Optional[Filter] = None,
-        orders: List[str] = None,
-        size: int = 10,
-        page: int = 1,
-    ):
-        self.filter = filter
-        self.orders = orders or []
-        self.size = size
-        self.page = page
-
     def build_query_string(self) -> str:
         parts = []
 
@@ -39,11 +27,7 @@ class ZenodoQuery(BaseQuery):
         if query_string:
             params["q"] = query_string
 
-        if self.orders:
-            params["sort"] = ",".join(self.orders)
-        else:
-            params["sort"] = "newest"
-
+        params["sort"] = self.sort
         return params
 
     def __str__(self) -> str:
