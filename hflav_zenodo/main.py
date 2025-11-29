@@ -1,24 +1,39 @@
 import datetime
 from hflav_zenodo.container import Container
-from hflav_zenodo.filters.search_filters import AndFilter, OrFilter, QueryBuilder
+from hflav_zenodo.filters.search_filters import (
+    AndFilter,
+    NotFilter,
+    OrFilter,
+    QueryBuilder,
+)
 from hflav_zenodo.filters.zenodo_query import ZenodoQuery
 
 container = Container()
 
 service = container.service()
 
-query = (
-    QueryBuilder(query=ZenodoQuery)
+query1 = (
+    QueryBuilder()
+    .with_number(field="version", value=2, operator=">=")
+    .apply_combinator(NotFilter)
+)
+query2 = (
+    QueryBuilder()
     .with_text(field="title", value="HFLAV")
-    .with_pagination(size=5, page=1)
     .with_date_range(
         field="created",
-        start_date=datetime.datetime(2025, 1, 1),
+        start_date=datetime.datetime(2022, 1, 1),
         end_date=datetime.datetime(2025, 12, 31),
     )
-    .build(combinator=OrFilter)
+    .apply_combinator(OrFilter)
 )
-
+query = (
+    QueryBuilder()
+    .with_pagination(size=5, page=1)
+    .merge_filters(query1)
+    .merge_filters(query2)
+    .build()
+)
 dynamic_class = service.search_and_load_data_file(query=query)
 # services.search_records_by_name(query="HFLAV", size=5, page=1)
 # dynamic_class = services.load_data_file(

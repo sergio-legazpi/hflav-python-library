@@ -4,6 +4,7 @@ from hflav_zenodo.conversors.template_schema_handler import TemplateSchemaHandle
 from hflav_zenodo.conversors.dynamic_conversor import DynamicConversor
 from hflav_zenodo.conversors.gitlab_schema_handler import GitlabSchemaHandler
 from hflav_zenodo.conversors.zenodo_schema_handler import ZenodoSchemaHandler
+from hflav_zenodo.filters.zenodo_query import ZenodoQuery
 from hflav_zenodo.processing.data_visualizer import DataVisualizer
 from hflav_zenodo.services.command import CommandInvoker
 from hflav_zenodo.services.service import (
@@ -23,6 +24,7 @@ class Container(containers.DeclarativeContainer):
             "hflav_zenodo.conversors.gitlab_schema_handler",
             "hflav_zenodo.services.service",
             "hflav_zenodo.conversors.dynamic_conversor",
+            "hflav_zenodo.filters.search_filters",
         ]
     )
 
@@ -31,6 +33,7 @@ class Container(containers.DeclarativeContainer):
     conversor = providers.Singleton(DynamicConversor)
     visualizer = providers.Singleton(DataVisualizer)
     command_invoker = providers.Singleton(CommandInvoker)
+    base_query = providers.Callable(lambda: ZenodoQuery)
 
     zenodo_schema_handler = providers.Factory(
         ZenodoSchemaHandler, source=source, conversor=conversor, visualizer=visualizer

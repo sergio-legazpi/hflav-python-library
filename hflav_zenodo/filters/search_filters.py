@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 import datetime
 from typing import Any, Type, Union
 
+from dependency_injector.wiring import inject, Provide
+
 from hflav_zenodo.filters.base_query import BaseQuery
 
 
@@ -83,16 +85,20 @@ class OrFilter(Filter):
 
 
 class NotFilter(Filter):
-    def __init__(self, filter: Filter):
-        self.filter = filter
+    def __init__(self, *filters: Filter):
+        self.filters = filters
 
     def build_query(self) -> str:
-        return f"NOT ({self.filter.build_query()})"
+        if not self.filters:
+            return ""
+        queries = [f"NOT ({filter.build_query()})" for filter in self.filters]
+        return " AND ".join(queries)
 
 
 # Builder to create complex queries
 class QueryBuilder:
-    def __init__(self, query: BaseQuery):
+    @inject
+    def __init__(self, query: BaseQuery = Provide["base_query"]):
         self.filters = []
         self.sorts = []
         self.page_size = 10
@@ -129,8 +135,64 @@ class QueryBuilder:
         self.page = page
         return self
 
-    def build(
+    def merge_filters(self, query: "QueryBuilder") -> "QueryBuilder":
+        filters = query.filters
+        for filter in filters:
+            self.filters.append(filter)
+        return self
+
+    def apply_combinator(
         self, combinator: Type[Union[AndFilter, OrFilter, NotFilter]]
+    ) -> "QueryBuilder":
+        if self.filters:
+            combined_filter = combinator(*self.filters)
+            self.filters = [combined_filter]
+        return self
+
+    def build(
+        self, default_operator: Type[Union[AndFilter, OrFilter, NotFilter]] = AndFilter
     ) -> "BaseQuery":
-        principal_filter = combinator(*self.filters) if self.filters else None
-        return self.query(principal_filter, self.sorts, self.page_size, self.page)
+        """
+        Build the final query with optional default operator for combining filters.
+
+        Args:
+            default_operator: The operator to use when there is more than one filter.
+
+        Returns:
+            BaseQuery: The constructed query object ready for execution.
+
+        Examples:
+            >>> # Complex query with NOT combinator
+            >>> query1 = (
+            ...     QueryBuilder()
+            ...     .with_number(field="version", value=2, operator=">=")
+            ...     .apply_combinator(NotFilter)
+            ... )
+            >>>
+            >>> # Query with OR combinator
+            >>> query2 = (
+            ...     QueryBuilder()
+            ...     .with_text(field="title", value="HFLAV")
+            ...     .with_date_range(
+            ...         field="created",
+            ...         start_date=datetime.datetime(2022, 1, 1),
+            ...         end_date=datetime.datetime(2025, 12, 31),
+            ...     )
+            ...     .apply_combinator(OrFilter)
+            ... )
+            >>>
+            >>> # Final combined query using default_operator
+            >>> query = (
+            ...     QueryBuilder()
+            ...     .with_pagination(size=5, page=1)
+            ...     .merge_filters(query1)
+            ...     .merge_filters(query2)
+            ...     .build()  # Uses default_operator default value for final combination
+            ... )
+        """
+        final_filter = (
+            default_operator(*self.filters)
+            if len(self.filters) > 1
+            else self.filters[0] if self.filters else None
+        )
+        return self.query(final_filter, self.sorts, self.page_size, self.page)
