@@ -45,3 +45,6 @@ class ZenodoQuery(BaseQuery):
             params["sort"] = "newest"
 
         return params
+
+    def __str__(self) -> str:
+        return self.build_query_string()

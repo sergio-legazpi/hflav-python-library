@@ -38,7 +38,7 @@ class Service(ServiceInterface):
         except DataAccessException as e:
             logger.error(f"Error while searching records: {e}")
             return []
-        logger.info(f"Found {len(records)} records matching query '{query}':")
+        logger.info(f"Found {len(records)} records matching query '{str(query)}':")
         for i, record in enumerate(records):
             logger.info(f"{i+1}: {record}")
         return records
