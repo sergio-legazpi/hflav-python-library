@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import List, Optional
 
+from hflav_zenodo.filters.base_query import BaseQuery
 from hflav_zenodo.models.models import Record, Template
 
 
@@ -15,15 +16,11 @@ class SourceInterface(ABC):
     """
 
     @abstractmethod
-    def get_records_by_name(
-        self, query: Optional[str] = None, size: int = 10, page: int = 1
-    ) -> List[Record]:
+    def get_records_by_name(self, query: BaseQuery) -> List[Record]:
         """Search records and return the records.
 
         Args:
-                query: optional free-text query
-                size: number of results to return
-                page: page number
+                query: BaseQuery instance representing the search query.
 
         Returns:
                 A list of records.

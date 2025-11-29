@@ -7,6 +7,7 @@ from hflav_zenodo.exceptions.source_exceptions import (
     DataAccessException,
     DataNotFoundException,
 )
+from hflav_zenodo.filters.base_query import BaseQuery
 from hflav_zenodo.models.models import File, Record, Template
 from hflav_zenodo.source.source_interface import SourceInterface
 
@@ -14,23 +15,11 @@ from hflav_zenodo.source.source_interface import SourceInterface
 class SourceZenodoRequest(SourceInterface):
 
     DEFAULT_BASE = "https://zenodo.org/api"
-    DEFAULT_COMMUNITY = "hflav"
     CONCEPT_ID_TEMPLATE = 12087575  # Template record for HFLAV data files
 
-    def get_records_by_name(
-        self,
-        query: Optional[str] = None,
-        size: int = 10,
-        page: int = 1,
-    ) -> Dict[str, Any]:
+    def get_records_by_name(self, query: BaseQuery) -> Dict[str, Any]:
         search_url = f"{self.DEFAULT_BASE}/records"
-        params = {
-            "communities": self.DEFAULT_COMMUNITY,
-            "q": query,
-            "size": size,
-            "page": page,
-            "sort": "newest",
-        }
+        params = query.build_params()
 
         response = requests.get(search_url, params=params, timeout=30)
         try:

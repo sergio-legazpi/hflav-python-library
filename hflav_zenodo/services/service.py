@@ -4,12 +4,9 @@ from typing import Optional, List
 from dependency_injector.wiring import inject, Provide
 
 from hflav_zenodo.conversors.conversor_interface import ConversorInterface
-from hflav_zenodo.conversors.gitlab_schema_handler import GitlabSchemaHandler
-from hflav_zenodo.conversors.template_schema_handler import TemplateSchemaHandler
-from hflav_zenodo.conversors.zenodo_schema_handler import ZenodoSchemaHandler
 from hflav_zenodo.exceptions.source_exceptions import DataAccessException
+from hflav_zenodo.filters.base_query import BaseQuery
 from hflav_zenodo.models.models import Record
-from hflav_zenodo.processing.visualizer_interface import VisualizerInterface
 from hflav_zenodo.services.command import CommandInvoker
 from hflav_zenodo.services.search_and_load_data_file_command import (
     SearchAndLoadDataFile,
@@ -35,13 +32,9 @@ class Service(ServiceInterface):
         self._command_invoker = command_invoker
         self._handler_schema_chain = handler_schema_chain
 
-    def search_records_by_name(
-        self, query: Optional[str] = None, size: int = 10, page: int = 1
-    ) -> List[Record]:
+    def search_records_by_name(self, query: BaseQuery) -> List[Record]:
         try:
-            records = self._source.get_records_by_name(
-                query=query, size=size, page=page
-            )
+            records = self._source.get_records_by_name(query=query)
         except DataAccessException as e:
             logger.error(f"Error while searching records: {e}")
             return []
@@ -50,11 +43,9 @@ class Service(ServiceInterface):
             logger.info(f"{i+1}: {record}")
         return records
 
-    def search_and_load_data_file(
-        self, query: Optional[str] = None, size: int = 10, page: int = 1
-    ) -> SimpleNamespace:
+    def search_and_load_data_file(self, query: BaseQuery) -> SimpleNamespace:
         self._command_invoker.set_command(
-            SearchAndLoadDataFile(service=self, query=query, size=size, page=page)
+            SearchAndLoadDataFile(service=self, query=query)
         )
         return self._command_invoker.execute_command()
 

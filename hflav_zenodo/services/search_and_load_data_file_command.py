@@ -1,3 +1,4 @@
+from hflav_zenodo.filters.base_query import BaseQuery
 from hflav_zenodo.logger import get_logger
 from hflav_zenodo.services.command import Command
 from dependency_injector.wiring import inject, Provide
@@ -11,23 +12,17 @@ class SearchAndLoadDataFile(Command):
     @inject
     def __init__(
         self,
+        query: BaseQuery,
         service: ServiceInterface = Provide["service"],
-        query: str = None,
-        size: int = 10,
-        page: int = 1,
     ):
         self._service = service
         self._query = query
-        self._size = size
-        self._page = page
 
     def execute(self):
         selected_record = 0
         selected_file = 0
         while selected_record == 0:
-            records = self._service.search_records_by_name(
-                query=self._query, size=self._size, page=self._page
-            )
+            records = self._service.search_records_by_name(query=self._query)
             logger.info("Select a record by number (or 0 to search again):")
             try:
                 selected_record = int(input())

@@ -9,6 +9,7 @@ from abc import ABC, abstractmethod
 from types import SimpleNamespace
 from typing import Optional, List
 
+from hflav_zenodo.filters.base_query import BaseQuery
 from hflav_zenodo.models.models import Record
 
 
@@ -20,9 +21,7 @@ class ServiceInterface(ABC):
     """
 
     @abstractmethod
-    def search_records_by_name(
-        self, query: Optional[str] = None, size: int = 10, page: int = 1
-    ) -> List[Record]:
+    def search_records_by_name(self, query: BaseQuery) -> List[Record]:
         """Search records by textual query.
 
         Returns a list of `Record` objects; should never raise on data access
@@ -31,9 +30,7 @@ class ServiceInterface(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def search_and_load_data_file(
-        self, query: Optional[str] = None, size: int = 10, page: int = 1
-    ) -> SimpleNamespace:
+    def search_and_load_data_file(self, query: BaseQuery) -> SimpleNamespace:
         """Interactive helper which searches records and lets the user pick a file.
 
         Implementations may request input() from stdin; returned object is a dynamic
