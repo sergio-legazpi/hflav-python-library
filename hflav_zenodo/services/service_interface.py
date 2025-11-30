@@ -48,3 +48,31 @@ class ServiceInterface(ABC):
         and converting it into a structured namespace.
         """
         raise NotImplementedError
+
+    @abstractmethod
+    def load_local_data_file_from_path(
+        self, file_path: str, schema_path: Optional[str] = None, validate: bool = True
+    ) -> SimpleNamespace:
+        """
+        Load a specific file from a local path.
+
+        Parameters:
+            file_path (str): The path to the data file.
+            schema_path (Optional[str]): The path to the schema file for validation.
+            validate (bool): Whether to validate the data against the schema.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def plot_data(
+        self, data_object: SimpleNamespace, save_path: Optional[str] = None
+    ) -> None:
+        """
+        Plot data from the given data object.
+        Parameters:
+            data_object (SimpleNamespace): The data object to plot.
+            save_path (Optional[str]): The path to save the plot.
+        Returns:
+            None
+        """
+        raise NotImplementedError

@@ -31,3 +31,23 @@ class ConversorInterface(ABC):
                 StructureException: If the data structure does not match the schema format.
 
         """
+        pass
+
+    @abstractmethod
+    def generate_instance_from_local_path(
+        self,
+        data_path: str,
+        schema_path: str = None,
+        validate: bool = True,
+    ) -> SimpleNamespace:
+        """
+        Load a local data file from a given path, optionally validating against a schema.
+
+        Returns:
+            An instance generated from the data files
+
+        Raises:
+            ValueError: If the data file is invalid.
+            StructureException: If validation is enabled and the data structure does not match the schema format.
+        """
+        pass

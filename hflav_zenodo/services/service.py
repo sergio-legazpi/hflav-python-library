@@ -76,3 +76,20 @@ class Service(ServiceInterface):
         logger.info(f"Downloaded record file {filename} to {file_path}")
 
         return self._handler_schema_chain.handle(template, file_path)
+
+    def load_local_data_file_from_path(
+        self,
+        file_path: str,
+        schema_path: Optional[str] = None,
+        validate: bool = True,
+    ) -> SimpleNamespace:
+        return self._conversor.generate_instance_from_local_path(
+            data_path=file_path,
+            schema_path=schema_path,
+            validate=validate,
+        )
+
+    def plot_data(
+        self, data_object: SimpleNamespace, save_path: Optional[str] = None
+    ) -> None:
+        return NotImplementedError("Method not implemented yet.")
