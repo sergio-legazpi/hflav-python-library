@@ -45,10 +45,10 @@ dynamic_class2 = service.load_local_data_file_from_path(
 
 data = HflavDataSearching(dynamic_class2)
 
-data.get_data_from_name(
-    object_name="groups",
+data.get_data_object_from_key_and_value(
+    object_name="averages",
     key_name="name",
-    operator=SearchOperators.CONTAINS,
+    operator=SearchOperators.GREATER_THAN,
     value="(1-prong)",
 )
 

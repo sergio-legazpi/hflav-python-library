@@ -17,8 +17,8 @@ class SearchOperators(Enum):
     LESS_THAN = "<"
     GREATER_THAN_OR_EQUALS = ">="
     LESS_THAN_OR_EQUALS = "<="
-    CONTAINS = "contains"
-    REGEX = "regex"
+    CONTAINS = "=~"
+    REGEX = "=~"
 
 
 class HflavDataSearching(BaseHflavDataDecorator):
@@ -31,7 +31,7 @@ class HflavDataSearching(BaseHflavDataDecorator):
         super().__init__(hflav_data)
         self._visualizer = visualizer
 
-    def get_data_from_name(
+    def get_data_object_from_key_and_value(
         self,
         object_name: str,
         key_name: str,
@@ -47,9 +47,6 @@ class HflavDataSearching(BaseHflavDataDecorator):
         jsonpath_expr = parse(
             f"$..{object_name}[?(@..{key_name} {operator.value} {value})]"
         )
-        # results = jsonpath.findall(
-        #     f"$..{object_name}[?(@..{key_name} {operator.value} {value})]", data_dict
-        # )
         results = [
             dict_to_namespace(match.value) for match in jsonpath_expr.find(data_dict)
         ]
