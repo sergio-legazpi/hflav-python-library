@@ -10,7 +10,7 @@ from hflav_zenodo.exceptions.source_exceptions import (
 )
 
 
-class TestSourceGitlabClient:
+class TestSourceGitlab:
     """Test suite for SourceGitlabClient focusing on public interface."""
 
     @pytest.fixture
