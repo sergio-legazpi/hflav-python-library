@@ -11,6 +11,14 @@ To install all the dependencies (including tests):
 And only dev dependencies:
 - `pip install .`
 
+## Documentation
+
+If you want to check the full documentation of this project, go to the docs folder.
+
+The class structure is as it can be seen in this picture:
+
+![Class diagram](docs/Class%20Diagram.png)
+
 ## Configuring environment variables
 
 These are all the environment variables available:
