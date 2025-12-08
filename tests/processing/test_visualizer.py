@@ -3,7 +3,6 @@ import json
 from types import SimpleNamespace
 from unittest.mock import patch, MagicMock, call
 
-# Import the actual classes
 from hflav_zenodo.processing.visualizer_interface import VisualizerInterface
 from hflav_zenodo.processing.data_visualizer import DataVisualizer
 

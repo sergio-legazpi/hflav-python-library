@@ -138,7 +138,6 @@ class TestService:
         # Setup
         mock_source.get_records_by_name.side_effect = Exception("Unexpected error")
 
-        # Execute & Verify - debería propagar la excepción, no devolver lista vacía
         with pytest.raises(Exception) as exc_info:
             service.search_records_by_name(mock_query)
 

@@ -88,11 +88,9 @@ class TestSourceGitlab:
         mock_schema_file = {
             "type": "blob",
             "name": "template.schema",
-            "path": "template.schema",  # Path más simple
+            "path": "template.schema",
         }
 
-        # Simular el comportamiento de _search_schema
-        # Primera llamada: encuentra el schema inmediatamente
         project.repository_tree.return_value = [mock_schema_file]
 
         # 3. Mock file content
@@ -159,7 +157,6 @@ class TestSourceGitlab:
         project.tags.get.side_effect = GitlabGetError("404 Tag Not Found", 404)
 
         # Mock _search_schema to return a valid schema file
-        # (esto se ejecutará ANTES de que falle el tag, por eso necesitamos mockearlo)
         mock_schema_file = {
             "type": "blob",
             "name": "template.schema",
@@ -177,7 +174,6 @@ class TestSourceGitlab:
 
     def test_get_schema_inside_repository_no_schema_found(self, gitlab_client):
         """Test retrieval when no schema file is found in repository."""
-        # Mockear _search_schema para que lance NoSchemaFoundInsideGitlabRepository directamente
         with patch.object(gitlab_client, "_search_schema") as mock_search:
             mock_search.side_effect = NoSchemaFoundInsideGitlabRepository(
                 message="No schema found inside the GitLab repository",
@@ -274,7 +270,6 @@ class TestSourceGitlab:
         """Test retrieval when multiple schema files exist (should find first one)."""
         project = gitlab_client.project
 
-        # Configurar que se encuentre algún schema (no importa cuál)
         mock_schema_file = {
             "type": "blob",
             "name": "some.schema",
@@ -290,7 +285,6 @@ class TestSourceGitlab:
 
             result = gitlab_client.get_schema_inside_repository("v1.0.0")
 
-            # Verificar que se obtuvo algún schema
             project.files.get.assert_called_once()
             assert isinstance(result, dict)
 
@@ -374,7 +368,6 @@ class TestSourceGitlab:
     ):
         """Test retrieval when recursive search raises an exception."""
         with patch.object(gitlab_client, "_search_schema") as mock_search:
-            # Mock _search_schema para que lance la excepción que espera get_schema_inside_repository
             mock_search.side_effect = NoSchemaFoundInsideGitlabRepository(
                 message="No schema found inside the GitLab repository",
                 details="Search failed",
@@ -390,8 +383,6 @@ class TestSourceGitlab:
         """Test retrieval using a branch reference instead of tag."""
         project = gitlab_client.project
 
-        # Mock _search_schema para devolver un schema válido
-        # (esto se ejecuta ANTES de _get_tag_name)
         mock_schema_file = {
             "type": "blob",
             "name": "template.schema",
@@ -401,8 +392,6 @@ class TestSourceGitlab:
         with patch.object(
             gitlab_client, "_search_schema", return_value=mock_schema_file
         ):
-            # Configurar que _get_tag_name (llamado internamente) falle
-            # ya que "feature-branch" no es un tag válido
             project.tags.get.side_effect = GitlabGetError("404 Tag Not Found", 404)
 
             with pytest.raises(NoVersionTagFound) as exc_info:
