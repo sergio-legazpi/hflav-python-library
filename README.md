@@ -8,8 +8,14 @@ To run this project you firstly must create a virtual environment and install al
 To install all the dependencies (including tests):
 - `pip install ".[test]"`
 
+Or if you want to edit the source code and see the changes instantly without installing the project (editable mode):
+- `pip install -e ".[test]"`
+
 And only dev dependencies:
 - `pip install .`
+
+Or:
+- `pip install -e ".[dev]"`
 
 ## Documentation
 
