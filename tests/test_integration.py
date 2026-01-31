@@ -14,10 +14,7 @@ from hflav_fair_client.filters.search_filters import (
     SortOptions,
 )
 from hflav_fair_client.filters.zenodo_query import ZenodoQuery
-from hflav_fair_client.models.hflav_data_searching import (
-    HflavDataSearching,
-    SearchOperators,
-)
+from hflav_fair_client.models.hflav_data_searching import HflavDataSearching, SearchOperators
 
 load_dotenv()
 

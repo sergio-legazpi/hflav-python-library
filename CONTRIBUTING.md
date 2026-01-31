@@ -1,58 +1,81 @@
-# HFLAV FAIR client contribution
+# Contributing to HFLAV FAIR Client
 
-## Running the code
+Thank you for your interest in contributing to the HFLAV FAIR Client project! This document provides guidelines and information for contributors.
 
-To run this project you firstly must create a virtual environment and install all the dependencies inside:
+## Getting Started
 
-1. `python -m venv .venv`
-2. `source .venv/bin/activate`
+To get started with development, please refer to our comprehensive documentation:
 
-To install all the dev dependencies (including tests):
-- `pip install -e ".[dev]"`
+- **[Development Guide](docs/DEVELOPMENT.md)** - Setting up your development environment and running the project
+- **[Testing Guide](docs/TESTING.md)** - Running tests, checking coverage, and understanding different test types
+- **[Code Analysis Guide](docs/CODE_ANALYSIS.md)** - Configuring and running code quality analysis with SonarQube
 
-## Runninig the tests
+## Quick Start
 
-To launch all the tests:
+1. **Set up your environment**:
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   pip install -e ".[dev]"
+   ```
 
-- `pytest tests`
+2. **Run tests**:
+   ```bash
+   pytest tests
+   ```
 
-To launch a specific test:
+3. **Check code quality**:
+   ```bash
+   coverage run -m pytest
+   coverage xml
+   ```
 
-- `pytest tests/test.py`
+For detailed instructions, see the [Development Guide](docs/DEVELOPMENT.md).
 
-And to check the coverage:
+## Contribution Workflow
 
-- `pytest --cov=hflav_fair_client.module`
+1. **Fork and clone** the repository
+2. **Create a feature branch**: `git checkout -b feature/your-feature-name`
+3. **Make your changes** with appropriate tests
+4. **Run tests and code analysis** to ensure quality
+5. **Commit your changes** with clear, descriptive messages
+6. **Push to your fork** and submit a pull request
 
-Where module is a specific module.
+## Code Standards
 
-e.g: `pytest --cov=hflav_fair_client.source`
+- Follow PEP 8 style guidelines
+- Write tests for new functionality
+- Maintain or improve code coverage (target: >80%)
+- Add docstrings to classes and functions
+- Update documentation as needed
 
-## Configuring code analysis locally
+## Running Code Analysis
 
-You will need:
-- docker
-- The SonarQube plugin
+Before submitting a pull request:
 
-If you want to analyze the quality of that you are doing, firstly you should launch the docker-compose:
+1. Ensure all tests pass: `pytest tests`
+2. Check coverage: `pytest --cov=hflav_fair_client`
+3. Run SonarQube analysis (see [Code Analysis Guide](docs/CODE_ANALYSIS.md))
 
-`docker compose up`
+## Documentation
 
-If is the first time you do this, you must go to `http://localhost:9000/`, configure your credentials and create a local project (e.g. hflav-project).
+- [Development Guide](docs/DEVELOPMENT.md) - Development setup and workflows
+- [Testing Guide](docs/TESTING.md) - Testing procedures and best practices
+- [Code Analysis Guide](docs/CODE_ANALYSIS.md) - Code quality and static analysis
+- [Logging Documentation](docs/LOGGING.md) - Logging configuration
+- [Architecture](docs/c4.png) - C4 architecture diagram
+- [Class Structure](docs/Class_Diagram.png) - Class diagram
 
-After this you should configure the connection with this info:
+## Questions or Issues?
 
-- Server URL: `http://localhost:9000` (after this click on generate token and click in confirm)
-- Connection name: `sonar-hflav-connection`
+If you have questions or encounter issues:
 
-If you want to check the coverage, you must run these commands:
+1. Check the documentation guides listed above
+2. Review existing issues in the repository
+3. Create a new issue with detailed information
 
-- `coverage run -m pytest`
-- `coverage xml`
+## License
 
+By contributing, you agree that your contributions will be licensed under the same license as the project.
 
-Once this config is done, you only need to link the created project with this command (It can be easily generated when you are creating the project and you indicate that it will be local with Python):
-
-- `pysonar --sonar-host-url=http://localhost:9000 --sonar-token=<TOKEN> --sonar-project-key=<PROJECT_KEY>`
-
-Finally, you can now go to the project and see the issues. If you want to correct it, you must go to the file and the sonarqube tab will show the issue.
+Thank you for contributing to HFLAV FAIR Client!
