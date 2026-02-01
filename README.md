@@ -28,7 +28,7 @@ And the class structure is as it can be seen in this image:
 
 ![Class diagram](docs/Class_Diagram.png)
 
-The Mermaid code for these diagrams is available in [c4.md](docs/c4.md) and [class_diagram.md](docs/class_diagram.md) respectively.
+The Mermaid code for these diagrams is available in [c4.md](docs/c4.md) and [class_diagram.md](docs/class_diagram.md) respectively. Additionally, a draw.io version of the class diagram is available in [Class_Diagram_drawio](docs/Class_Diagram_drawio).
 
 ## Configuring environment variables
 
