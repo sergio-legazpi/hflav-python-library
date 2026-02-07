@@ -33,7 +33,6 @@ Below are simple examples showing how to retrieve and work with results from an 
 ### Example 1: Search for HFLAV records on Zenodo and load data
 
 ```python
-from hflav_fair_client.container import Container
 from hflav_fair_client.filters.search_filters import QueryBuilder, SortOptions
 from hflav_fair_client.services.service import Service
 
