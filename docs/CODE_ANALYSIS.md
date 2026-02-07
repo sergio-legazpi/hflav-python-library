@@ -14,10 +14,10 @@ This project uses SonarQube for static code analysis to ensure code quality, ide
 
 ### 1. Start SonarQube Server
 
-Launch the SonarQube server using Docker Compose:
+Launch the SonarQube server using Docker Compose (the `docker-compose.yaml` file is located in the `testing/` directory):
 
 ```bash
-docker compose up
+docker compose -f testing/docker-compose.yaml up
 ```
 
 This will start the SonarQube server on `http://localhost:9000`.

@@ -20,14 +20,8 @@ class Container(containers.DeclarativeContainer):
     """Dependency injection container for HFLAV FAIR client library."""
 
     wiring_config = containers.WiringConfiguration(
-        modules=[
-            "hflav_fair_client.conversors.conversor_handler",
-            "hflav_fair_client.conversors.zenodo_schema_handler",
-            "hflav_fair_client.conversors.gitlab_schema_handler",
-            "hflav_fair_client.services.service",
-            "hflav_fair_client.conversors.dynamic_conversor",
-            "hflav_fair_client.filters.search_filters",
-            "hflav_fair_client.models.hflav_data_searching",
+        packages=[
+            "hflav_fair_client",
         ]
     )
 
@@ -35,17 +29,21 @@ class Container(containers.DeclarativeContainer):
 
     source = providers.Singleton(SourceZenodoRequest)
     gitlab_source = providers.Singleton(SourceGitlabClient)
-    conversor = providers.Singleton(DynamicConversor)
     visualizer = providers.Singleton(DataVisualizer)
+    conversor = providers.Singleton(DynamicConversor, visualizer=visualizer)
     command_invoker = providers.Singleton(CommandInvoker)
-    base_query = providers.Callable(lambda: ZenodoQuery)
+    base_query = providers.Object(ZenodoQuery)
 
     zenodo_schema_handler = providers.Factory(
         ZenodoSchemaHandler, source=source, conversor=conversor, visualizer=visualizer
     )
 
     gitlab_schema_handler = providers.Factory(
-        GitlabSchemaHandler, source=source, conversor=conversor, visualizer=visualizer
+        GitlabSchemaHandler,
+        source=source,
+        conversor=conversor,
+        visualizer=visualizer,
+        gitlab_source=gitlab_source,
     )
 
     template_schema_handler = providers.Factory(
