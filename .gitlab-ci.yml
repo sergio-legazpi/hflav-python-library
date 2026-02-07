@@ -12,7 +12,7 @@ unit_test:
     - python -m venv .venv
     - . .venv/bin/activate
     - pip install --upgrade pip
-    - pip install ".[test]"
+    - pip install -e ".[test]"
     - pytest tests -m "not integration and not performance" --cov=hflav_fair_client --cov-report=term-missing --cov-report=xml:coverage.xml -v
   coverage: '/TOTAL.*\s+([0-9]{1,3}%)/'
   artifacts:
